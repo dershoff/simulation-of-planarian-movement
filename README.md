@@ -13,12 +13,8 @@ A user can set the angular bias of the cilia  beating  for a chosen subpart of t
 No installation required; just open it in your matlab session, or add it to Matlab path (right click on the folder and choose "Add to Path").
 
 # Usage
-1. First create settings for the simulation.
+1. First create parameters for a new worm.
     ``` Matlab 
-    opts.simulation.frames = 1000;
-    opts.simulation.showFrames = 0;
-    opts.simulation.saveVideo = 0;
-
     opts.worm.length = 8; %mm
     opts.worm.bodyRatio = 2.8; %length to width, normal value = 2.8
     opts.worm.initialPosition = [5, 3, 0];
@@ -28,30 +24,35 @@ No installation required; just open it in your matlab session, or add it to Matl
     opts.worm.mass = 10; %arbitrary
     opts.worm.dt = 1; %time step for integration
     ```
+    
 2. Create a worm:
+
     ``` Matlab 
     w = gen_worm(opts);
-    w.singleShow; %visualise
+    w.singleShow; %  visualise the position and orientation.
+    ```
+3.  All work is done in the method of the worm-class, called "worm.move()". It configures randomly (with user-defined biases) new configuration of cilia beating forces, calculates the translatoin and rotation and updates the position of the worm.  You just need to write a wrapper around this functoin that does what you want (See below "runStuff").
+    ``` Matlab 
+    w.move;
+    w.singleShow; % visualise new position and orientation
 
     ```
-3. Create settings for simulation:
+
+4. Create settings for simulation:
     ``` Matlab 
     opts.simulation.frames = 100;
     opts.simulation.showFrames = 1;
-    opts.simulation.showStamps = 0;
-    opts.simulation.saveVideo = 0;
+    opts.simulation.showStamps = 1;
+    opts.simulation.saveVideo = 1;
     opts.simulation.VideoName = 'temp_test';
     ```
 
-3. Run simulation. Iterations are done inside the funciton "runStuff"; the acrtual workhorse is the method of the worm class "worm.move(), which updates the coordinates due to cilia forces and updates the cilia force parameters.
+5. Any simulation would utilize the method "worm.move". A user just needs to write a function-wrapper that uses this method in the way he needs. One broadly applicable example is the function "runStuff", which calls this method given number of times and extracts various parameters of the worm: position, orientation, total cilia force, etc.
     ``` Matlab 
-    plotOn =  1; % to visualize iteraitno steps
+    plotOn =  1; % to visualize iteraitions
     runStuff(w, opts, plotOn);
     ````
-4. The output parameters can be accumulated and then plotted.
-    ``` Matlab 
-    TODO;
-    ```
+4. The output parameters of this wrapper functions can be collected and then plotted. See "f2_test_angles.m" or "f2_test_bodyLengths.m"
 
 Look for more exmaples in the coresponding folder.
 
